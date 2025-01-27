@@ -38,13 +38,25 @@ pygame.display.set_caption('Змейка')
 clock = pygame.time.Clock()
 
 
-class Apple:
+class GameObject:
+    """Базовый класс для всех игровых объектов."""
+
+    def __init__(self, position, body_color):
+        """Инициализация игрового объекта."""
+        self.position = position
+        self.body_color = body_color
+
+    def draw(self):
+        """Отрисовка игрового объекта. Определяется в дочерних классах."""
+        raise NotImplementedError("Метод draw должен быть переопределен в дочернем классе.")
+
+
+class Apple(GameObject):
     """Класс, описывающий яблоко."""
 
     def __init__(self):
         """Инициализация яблока."""
-        self.position = self.randomize_position()
-        self.body_color = APPLE_COLOR
+        super().__init__(self.randomize_position(), APPLE_COLOR)
 
     def randomize_position(self):
         """Генерация случайной позиции яблока."""
@@ -60,15 +72,16 @@ class Apple:
         pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
 
 
-class Snake:
+class Snake(GameObject):
     """Класс, описывающий змейку."""
 
     def __init__(self):
         """Инициализация змейки."""
-        self.positions = [(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)]
+        initial_position = [(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)]
+        super().__init__(initial_position[0], SNAKE_COLOR)
+        self.positions = initial_position
         self.direction = RIGHT
         self.next_direction = None
-        self.body_color = SNAKE_COLOR
         self.last = None
 
     def move(self):
