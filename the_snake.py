@@ -37,6 +37,7 @@ pygame.display.set_caption('Змейка')
 # Настройка времени:
 clock = pygame.time.Clock()
 
+
 class Apple:
     """Класс, описывающий яблоко."""
 
@@ -47,13 +48,17 @@ class Apple:
 
     def randomize_position(self):
         """Генерация случайной позиции яблока."""
-        return (randint(0, GRID_WIDTH - 1) * GRID_SIZE, randint(0, GRID_HEIGHT - 1) * GRID_SIZE)
+        return (
+            randint(0, GRID_WIDTH - 1) * GRID_SIZE,
+            randint(0, GRID_HEIGHT - 1) * GRID_SIZE
+        )
 
     def draw(self):
         """Отрисовка яблока на экране."""
         rect = pygame.Rect(self.position, (GRID_SIZE, GRID_SIZE))
         pygame.draw.rect(screen, self.body_color, rect)
         pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
+
 
 class Snake:
     """Класс, описывающий змейку."""
@@ -70,7 +75,10 @@ class Snake:
         """Перемещение змейки."""
         head_x, head_y = self.positions[0]
         dir_x, dir_y = self.direction
-        new_head = ((head_x + dir_x * GRID_SIZE) % SCREEN_WIDTH, (head_y + dir_y * GRID_SIZE) % SCREEN_HEIGHT)
+        new_head = (
+            (head_x + dir_x * GRID_SIZE) % SCREEN_WIDTH,
+            (head_y + dir_y * GRID_SIZE) % SCREEN_HEIGHT
+        )
         self.positions.insert(0, new_head)
         self.last = self.positions.pop()
 
@@ -109,6 +117,7 @@ class Snake:
         """Сброс состояния змейки."""
         self.__init__()
 
+
 def handle_keys(snake):
     """Обработка нажатий клавиш пользователем."""
     for event in pygame.event.get():
@@ -124,6 +133,7 @@ def handle_keys(snake):
                 snake.next_direction = LEFT
             elif event.key == pygame.K_RIGHT and snake.direction != LEFT:
                 snake.next_direction = RIGHT
+
 
 def main():
     """Основная функция игры."""
@@ -148,6 +158,7 @@ def main():
         apple.draw()
         snake.draw()
         pygame.display.update()
+
 
 if __name__ == '__main__':
     main()
