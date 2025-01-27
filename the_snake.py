@@ -7,6 +7,10 @@ SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
 GRID_SIZE = 20
 
+# Добавляем GRID_WIDTH и GRID_HEIGHT:
+GRID_WIDTH = SCREEN_WIDTH // GRID_SIZE
+GRID_HEIGHT = SCREEN_HEIGHT // GRID_SIZE
+
 BOARD_BACKGROUND_COLOR = (0, 0, 0)  # Чёрный фон
 SNAKE_COLOR = (0, 255, 0)          # Зелёный цвет змейки
 APPLE_COLOR = (255, 0, 0)          # Красный цвет яблока
@@ -16,6 +20,11 @@ UP = (0, -1)
 DOWN = (0, 1)
 LEFT = (-1, 0)
 RIGHT = (1, 0)
+
+# Инициализируем pygame и создаём объекты screen и clock
+pygame.init()
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+clock = pygame.time.Clock()
 
 
 def handle_keys(snake):
@@ -89,13 +98,13 @@ class Apple(GameObject):
         Устанавливает для яблока случайную позицию. Позиция кратна GRID_SIZE
         и не выходит за границы экрана.
         """
-        x = random.randint(0, (SCREEN_WIDTH // GRID_SIZE) - 1) * GRID_SIZE
-        y = random.randint(0, (SCREEN_HEIGHT // GRID_SIZE) - 1) * GRID_SIZE
+        x = random.randint(0, GRID_WIDTH - 1) * GRID_SIZE
+        y = random.randint(0, GRID_HEIGHT - 1) * GRID_SIZE
         self.position = (x, y)
 
     def draw(self, surface):
         """
-        Отрисовывает яблоко в виде квадрата 20x20 (GRID_SIZE).
+        Отрисовывает яблоко в виде квадрата GRID_SIZE x GRID_SIZE.
 
         :param surface: поверхность для рисования
         """
@@ -118,8 +127,7 @@ class Snake(GameObject):
         """
         super().__init__(body_color=SNAKE_COLOR)
         self.length = 1
-        # Список сегментов: голова + тело
-        self.positions = [self.position]
+        self.positions = [self.position]  # Список сегментов: голова + тело
         self.direction = RIGHT
         self.next_direction = None
         self.last = None  # Для "стирания" хвоста
@@ -152,12 +160,11 @@ class Snake(GameObject):
         """
         head_x, head_y = self.get_head_position()
         dx, dy = self.direction
-
         new_x = (head_x + dx * GRID_SIZE) % SCREEN_WIDTH
         new_y = (head_y + dy * GRID_SIZE) % SCREEN_HEIGHT
         new_head = (new_x, new_y)
 
-        # Столкновение с собой (кроме первых двух элементов: голова и "шея")
+        # Столкновение с собой (кроме первых двух элементов: голова, "шея")
         if new_head in self.positions[2:]:
             self.reset()
             return
@@ -203,14 +210,11 @@ class Snake(GameObject):
 def main():
     """
     Основная функция, запускающая игру:
-    - Инициализирует Pygame и окно.
+    - Устанавливает заголовок окна.
     - Создаёт объекты змейки и яблока.
     - Запускает игровой цикл.
     """
-    pygame.init()
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Изгиб Питона — классическая Змейка")
-    clock = pygame.time.Clock()
 
     snake = Snake()
     apple = Apple()
@@ -220,10 +224,12 @@ def main():
         snake.update_direction()
         snake.move()
 
+        # Проверяем, съела ли змейка яблоко
         if snake.get_head_position() == apple.position:
             snake.length += 1
             apple.randomize_position()
 
+        # Отрисовка
         apple.draw(screen)
         snake.draw(screen)
 
