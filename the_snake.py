@@ -105,9 +105,7 @@ class Apple(GameObject):
 
 
 class Snake(GameObject):
-    """
-    Класс, описывающий змейку. Наследуется от GameObject.
-    """
+    """Класс, описывающий змейку. Наследуется от GameObject."""
 
     def __init__(self):
         """
@@ -120,7 +118,8 @@ class Snake(GameObject):
         """
         super().__init__(body_color=SNAKE_COLOR)
         self.length = 1
-        self.positions = [self.position]  # Список сегментов (голова + тело)
+        # Список сегментов: голова + тело
+        self.positions = [self.position]
         self.direction = RIGHT
         self.next_direction = None
         self.last = None  # Для "стирания" хвоста
@@ -158,15 +157,14 @@ class Snake(GameObject):
         new_y = (head_y + dy * GRID_SIZE) % SCREEN_HEIGHT
         new_head = (new_x, new_y)
 
+        # Столкновение с собой (кроме первых двух элементов: голова и "шея")
         if new_head in self.positions[2:]:
-            # Столкновение с собой
             self.reset()
             return
 
-        # Добавляем новую голову
         self.positions.insert(0, new_head)
 
-        # Убираем хвост, если превышена длина
+        # Убираем хвост, если длина превышена
         if len(self.positions) > self.length:
             self.last = self.positions.pop()
 
@@ -218,19 +216,14 @@ def main():
     apple = Apple()
 
     while True:
-        # Обработка клавиш
         handle_keys(snake)
-        # Обновляем направление
         snake.update_direction()
-        # Двигаем змейку
         snake.move()
 
-        # Проверяем, съела ли змейка яблоко
         if snake.get_head_position() == apple.position:
             snake.length += 1
             apple.randomize_position()
 
-        # Отрисовка
         apple.draw(screen)
         snake.draw(screen)
 
